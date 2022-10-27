@@ -1,12 +1,13 @@
-FROM balenalib/amd64-debian-node:12.22-bullseye-run
+FROM %FROM%
 
-ARG PLEXAMP_VERSION=v4.5.0-beta.7
+ARG PLEXAMP_VERSION=v4.5.0
 
 ENV PLEXAMP_VERSION=$PLEXAMP_VERSION
 
 RUN apt -y update \
   && apt -y upgrade \
-  && apt -y install --no-install-recommends bzip2 alsa-utils pulseaudio pulseaudio-utils
+  && apt -y install --no-install-recommends bzip2 alsa-utils \
+  && apt-get install -q -q -y --no-install-recommends liblo-dev jq 
 
 RUN groupadd -g 1001 plexamp \
   && useradd -g 1001 -u 1001 -s /bin/bash -d /home/plexamp -G audio,video,render plexamp
@@ -18,10 +19,6 @@ RUN mkdir /app \
   && chown -R 1001:1001 /app \
   && apt-get -y clean autoclean \
   && apt-get autoremove -y 
-
-
-# COPY confs/asound.conf /etc/asound.conf
-# COPY confs/pulse-client.conf /etc/pulse/client.conf
 
 VOLUME /home/plexamp
 USER 1001
