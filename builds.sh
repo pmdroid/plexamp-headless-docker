@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 
-VERSION="v4.5.0"
-TAG=450
+VERSION=${VERSION:-latest}
+TAG=${TAG:-}
+
+if [ "$VERSION" = "latest" ]; then
+    LV=$(curl -s "https://plexamp.plex.tv/headless/version.json" | jq -r '.latestVersion')
+    VERSION="v${LV}"
+    TAG=$(echo $LV | sed -e 's/\.//g')
+else
+    TAG=$(echo $VERSION | sed -e 's/\.//g' -e 's/^v//')
+fi
 
 IMAGE_BASE="registry.gitlab.com/zonywhoop/plexamp-headless-docker"
 BUILDS="linux/amd64:amd64 linux/arm64/v8:rpi4 linux/arm/v7:rpi3"
