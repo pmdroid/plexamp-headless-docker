@@ -58,11 +58,21 @@ Additionally, it is important to ensure that no other audio applications are run
 
 ## Usage
 ### Prep local storage
-Next we need to create a folder for PlexAmp to store it's configuration files:
+Next we need to create a folder for PlexAmp to store it's configuration files, here you can create a local system user that matches what plexamp runs as OR you can just create a directory that is owned by the uid/gid that plexamp runs as.
+
+Note that creating a local user may be required to ensure proper access to the /dev audio devices
 ```BASH
 sudo groupadd -g 1001 plexamp
 sudo useradd -u 1001 -g 1001 -G -G audio,video,render \
   --home /opt/plexamp plexamp
+```
+
+
+Or just create the folder and ensure it's owned by the user plexamp runs as:
+```BASH
+sudo mkdir /opt/plexamp
+sudo chown 1001:1001 /opt/plexamp
+sudo chmod 775 /opt/plexamp
 ```
 
 ### The container
@@ -84,7 +94,7 @@ sudo podman run -it --privileged \
   --mount type=bind,src=/run,dst=/run \
   --network=host \
   --name plexamp \
-  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-450
+  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
 ```
 
 #### Recurring Startup
@@ -96,7 +106,32 @@ sudo podman run -d --privileged --restart unless-stopped \
   --mount type=bind,src=/run,dst=/run \
   --network=host \
   --name plexamp \
-  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-450
+  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
 ```
+
+### Docker Compose
+Below is a `docker-compose.yml` file known to work:
+
+```YAML
+version: '3'
+services:
+  lms:
+    container_name: plexamp
+    privileged: true
+    network_mode: "host"
+    image: registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
+    volumes:
+      - /data/docker/plexamp/:/home/plexamp:rw
+      - /run:/run:rw
+    restart: unless-stopped
+```
+
+## In container updates
+You can update Plexamp Headless to the latest release in-container by running the following:
+```BASH
+podman exec -it plexamp /usr/local/bin/update_plexamp
+```
+* Substitue the `plexamp` above with the name of the container on your system!
+
 
 That's it! You should now be able to access PlexAmp at `http://device.ip:32500`. 

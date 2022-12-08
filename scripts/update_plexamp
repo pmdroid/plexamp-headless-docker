@@ -1,0 +1,51 @@
+#!/bin/bash
+CHANNEL=${RELEASE_CHANNEL:-version}
+
+_version_file=/app/plexamp_version
+
+if [ -f $_version_file ]; then
+	CUR_VERSION=$(cat $_version_file)
+	echo "Current version is: $CUR_VERSION"
+else
+	CUR_VERSION=0
+	echo "Unable to determine current version, downloading latest"
+fi
+
+# Get the latest version from plex
+curl -o /tmp/channel_data.json -s "https://plexamp.plex.tv/headless/${CHANNEL}.json"
+if [ $? -gt 0 ]; then
+    echo "Failed fetching update information"
+    [ -f /tmp/channel_data.json ] && rm -f /tmp/channel_data.json
+    exit 1
+fi
+
+LATEST_VERSION=$(cat /tmp/channel_data.json | jq -r '.latestVersion')
+LATEST_PACKAGE=$(cat /tmp/channel_data.json | jq -r '.updateUrl')
+
+# Compare latest to current
+if [ "$CUR_VERSION" = "$LATEST_VERSION" ]; then
+	echo "Curent and latest version are the same"
+	exit 0
+fi
+
+echo "Fetching latest version $LATEST_VERSION"
+curl -o /tmp/plexamp-headless.tbz2 -L "$LATEST_PACKAGE"
+if [ $? -gt 0 ]; then
+    echo "Failed downloading package"
+    exit 1
+fi
+
+echo "Extracting"
+tar -jxf /tmp/plexamp-headless.tbz2 -C /app
+if [ $? -gt 0 ]; then
+    echo "Failed extracting new package"
+    exit 1
+fi
+
+# Do some cleanup
+rm -f /tmp/*.tbz2
+rm -f /tmp/channel_data.json
+
+chown -R 1001:1001 /app
+echo $LATEST_VERSION > $_version_file
+echo "New version installed, please restart container: docker restart {container_name}"

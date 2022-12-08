@@ -1,8 +1,8 @@
 FROM %FROM%
 
-ARG PLEXAMP_VERSION=v4.5.0
+ARG PLEXAMP_BUILD_VERSION
 
-ENV PLEXAMP_VERSION=$PLEXAMP_VERSION
+ENV PLEXAMP_BUILD_VERSION=$PLEXAMP_BUILD_VERSION
 
 RUN apt -y update \
   && apt -y upgrade \
@@ -12,11 +12,15 @@ RUN apt -y update \
 RUN groupadd -g 1001 plexamp \
   && useradd -g 1001 -u 1001 -s /bin/bash -d /home/plexamp -G audio,video,render plexamp
 
+COPY scripts/* usr/local/bin/
+
 RUN mkdir /app \
-  && curl -o /tmp/plexamp-linux.tbz2 -L https://plexamp.plex.tv/headless/Plexamp-Linux-headless-${PLEXAMP_VERSION}.tar.bz2 \
+  && curl -o /tmp/plexamp-linux.tbz2 -L https://plexamp.plex.tv/headless/Plexamp-Linux-headless-${PLEXAMP_BUILD_VERSION}.tar.bz2 \
   && tar -jxvf /tmp/plexamp-linux.tbz2 -C /app \
   && rm -f /tmp/*.tbz2 \
+  && echo $PLEXAMP_BUILD_VERSION | sed -e 's/^v//' > /app/plexamp_version \
   && chown -R 1001:1001 /app \
+  && chmod 755 /usr/local/bin/* \
   && apt-get -y clean autoclean \
   && apt-get autoremove -y 
 

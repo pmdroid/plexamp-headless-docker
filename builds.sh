@@ -20,26 +20,29 @@ for b in $BUILDS; do
     BT=$(echo $b | cut -d: -f2)
     ARCH=$(echo $b | cut -d: -f1 | cut -d/ -f2)
     THIS_TAG="${IMAGE_BASE}:${ARCH}-${TAG}"
-    DFROM="balenalib\/amd64-ubuntu-node:12.22-focal-run"
+    DFROM="balenalib\/amd64-ubuntu-node:16-focal-run"
     case "$BT" in
         rpi3)
-            DFROM="balenalib\/raspberrypi3-node:12.22-run"
+            DFROM="balenalib\/raspberrypi3-node:16-run"
             ;;
         rpi4)
-            DFROM="balenalib\/raspberrypi4-64-node:12.22-run"
+            DFROM="balenalib\/raspberrypi4-64-node:16-run"
             ;;
     esac
     cat Dockerfile.template | sed -e "s/%FROM%/${DFROM}/" > Dockerfile
 
     echo "Building for $BP"
-    docker build --platform $BP --build-arg=PLEXAMP_VERSION="${VERSION}" -t ${THIS_TAG} -f Dockerfile . 
+    docker build --platform $BP --build-arg=PLEXAMP_BUILD_VERSION="${VERSION}" -t ${THIS_TAG} -f Dockerfile . 
     RET=$?
     if [ $RET -eq 0 ]; then
         echo "Pushing $BP"
         docker push ${THIS_TAG}
         MANIFEST="${MANIFEST} --amend ${THIS_TAG}"
     else
+        echo "************************"
         echo "Build failed"
+        echo "************************"
+        exit 1
     fi
 done
 echo "Pushing final manifest"
