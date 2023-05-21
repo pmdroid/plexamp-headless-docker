@@ -11,7 +11,7 @@ else
     TAG=$(echo $VERSION | sed -e 's/\.//g' -e 's/^v//')
 fi
 
-IMAGE_BASE="registry.gitlab.com/zonywhoop/plexamp-headless-docker"
+IMAGE_BASE="ghcr.io/pmdroid/plexamp-headless-docker"
 BUILDS="linux/amd64:amd64 linux/arm64/v8:rpi4 linux/arm/v7:rpi3"
 
 MANIFEST="docker manifest create ${IMAGE_BASE}:${TAG}"
