@@ -27,4 +27,4 @@ jobs:
           password: ${{secrets.GITHUB_TOKEN}}
 
       - name: Build
-        run: ./build.sh latest
+        run: ./builds.sh latest
