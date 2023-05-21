@@ -1,7 +1,8 @@
 name: 'Check for new release and build images'
 
-on: push
-
+on:
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   docker:
