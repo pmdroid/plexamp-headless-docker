@@ -2,6 +2,7 @@ name: 'Check for new release and build images'
 
 on: push
 
+
 jobs:
   docker:
     runs-on: ubuntu-latest
