@@ -1,6 +1,7 @@
 name: 'Check for new release and build images'
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 
