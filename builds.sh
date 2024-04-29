@@ -20,13 +20,13 @@ for b in $BUILDS; do
     BT=$(echo $b | cut -d: -f2)
     ARCH=$(echo $b | cut -d: -f1 | cut -d/ -f2)
     THIS_TAG="${IMAGE_BASE}:${ARCH}-${TAG}"
-    DFROM="balenalib\/amd64-ubuntu-node:16-focal-run"
+    DFROM="balenalib\/amd64-ubuntu-node:20-focal-run"
     case "$BT" in
         rpi3)
-            DFROM="balenalib\/raspberrypi3-node:16-run"
+            DFROM="balenalib\/raspberrypi3-node:20-run"
             ;;
         rpi4)
-            DFROM="balenalib\/raspberrypi4-64-node:16-run"
+            DFROM="balenalib\/raspberrypi4-64-node:20-run"
             ;;
     esac
     cat Dockerfile.template | sed -e "s/%FROM%/${DFROM}/" > Dockerfile
