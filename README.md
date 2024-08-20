@@ -5,7 +5,7 @@ In short, this repository provides instructions and a docker container for runni
 PlexAmp is an audio player/stream receiver that plays audio files and lists stored in your plex server.  The headless version allows you to run it on a machine with a gui and allows control via web interface or via streaming from the desktop or mobile version. For this reason, it makes a great audio player endpoint for home audio and other embedded style setups.
 
 ## Reporting issues / getting help
-Please open an issue on the project here: [Project Issues](https://gitlab.com/zonywhoop/plexamp-headless-docker/-/issues)
+Please open an issue on the project here: [Project Issues]([https://gitlab.com/zonywhoop/plexamp-headless-docker/-/issues](https://github.com/pmdroid/plexamp-headless-docker/issues))
 
 ## The Build
 ### The Host Machine
@@ -83,7 +83,7 @@ We build 3 different images for each released version of Plexamp Headless.  Thes
 * arm64 [linux/arm64/v8] 
 
 The tag format looks like this:
-`registry.gitlab.com/zonywhoop/plexamp-headless-docker:(platform)-(version)` so for version 4.5.0 on amd64 the docker tag would be `registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-450`
+`ghcr.io/pmdroid/plexamp-headless-docker:arm-4111:amd64-461     image: docker pull ghcr.io/pmdroid/plexamp-headless-docker:(platform)-(version)` so for version 4.5.0 on amd64 the docker tag would be `ghcr.io/pmdroid/plexamp-headless-docker:arm-4111:amd64-461     image: docker pull ghcr.io/pmdroid/plexamp-headless-docker:amd64-450`
 
 #### Initial Startup
 Here we can start the container for the first time. Note we have to run this container in interactive mode at the console so we can claim the player and setup it's cookie:
@@ -94,7 +94,7 @@ sudo podman run -it --privileged \
   --mount type=bind,src=/run,dst=/run \
   --network=host \
   --name plexamp \
-  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
+  ghcr.io/pmdroid/plexamp-headless-docker:arm-4111:amd64-461     image: docker pull ghcr.io/pmdroid/plexamp-headless-docker:amd64-461
 ```
 
 #### Recurring Startup
@@ -106,7 +106,7 @@ sudo podman run -d --privileged --restart unless-stopped \
   --mount type=bind,src=/run,dst=/run \
   --network=host \
   --name plexamp \
-  registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
+  ghcr.io/pmdroid/plexamp-headless-docker:arm-4111:amd64-461     image: docker pull ghcr.io/pmdroid/plexamp-headless-docker:amd64-461
 ```
 
 ### Docker Compose
@@ -119,7 +119,7 @@ services:
     container_name: plexamp
     privileged: true
     network_mode: "host"
-    image: registry.gitlab.com/zonywhoop/plexamp-headless-docker:amd64-461
+    image: ghcr.io/pmdroid/plexamp-headless-docker:arm-4111:amd64-461     image: docker pull ghcr.io/pmdroid/plexamp-headless-docker:amd64-461
     volumes:
       - /data/docker/plexamp/:/home/plexamp:rw
       - /run:/run:rw
