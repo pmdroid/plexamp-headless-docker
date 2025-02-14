@@ -33,7 +33,7 @@ for b in $BUILDS; do
     cat Dockerfile.template | sed -e "s/%FROM%/${DFROM}/" > Dockerfile
 
     echo "Building for $BP"
-    docker build --privileged --platform $BP --build-arg=PLEXAMP_BUILD_VERSION="${VERSION}" -t ${THIS_TAG} -f Dockerfile . 
+    docker build --platform $BP --build-arg=PLEXAMP_BUILD_VERSION="${VERSION}" -t ${THIS_TAG} -f Dockerfile . 
     RET=$?
     if [ $RET -eq 0 ]; then
         echo "Pushing $BP"
